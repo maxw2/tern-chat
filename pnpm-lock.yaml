@@ -12,6 +12,9 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
     devDependencies:
+      '@rollup/plugin-commonjs':
+        specifier: ^28.0.6
+        version: 28.0.6(rollup@4.45.0)
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.1
         version: 16.0.1(rollup@4.45.0)
@@ -27,11 +30,23 @@ importers:
 
 packages:
 
+  '@jridgewell/sourcemap-codec@1.5.4':
+    resolution: {integrity: sha512-VT2+G1VQs/9oz078bLrYbecdZKs912zQlkelYpuf+SXF+QvZDYJlbx/LSx+meSAwdDFnF8FVXW92AVjjkVmgFw==, tarball: https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.4.tgz}
+
   '@lit-labs/ssr-dom-shim@1.4.0':
     resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==, tarball: https://registry.npmjs.org/@lit-labs/ssr-dom-shim/-/ssr-dom-shim-1.4.0.tgz}
 
   '@lit/reactive-element@2.1.1':
     resolution: {integrity: sha512-N+dm5PAYdQ8e6UlywyyrgI2t++wFGXfHx+dSJ1oBrg6FAxUj40jId++EaRm80MKX5JnlH1sBsyZ5h0bcZKemCg==, tarball: https://registry.npmjs.org/@lit/reactive-element/-/reactive-element-2.1.1.tgz}
+
+  '@rollup/plugin-commonjs@28.0.6':
+    resolution: {integrity: sha512-XSQB1K7FUU5QP+3lOQmVCE3I0FcbbNvmNT4VJSj93iUjayaARrTQeoRdiYQoftAJBLrR9t2agwAd3ekaTgHNlw==, tarball: https://registry.npmjs.org/@rollup/plugin-commonjs/-/plugin-commonjs-28.0.6.tgz}
+    engines: {node: '>=16.0.0 || 14 >= 14.17'}
+    peerDependencies:
+      rollup: ^2.68.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
 
   '@rollup/plugin-node-resolve@16.0.1':
     resolution: {integrity: sha512-tk5YCxJWIG81umIvNkSod2qK5KyQW19qcBF/B78n1bjtOON6gzKoVeSzAE8yHCZEDmqkHKkxplExA8KzdJLJpA==, tarball: https://registry.npmjs.org/@rollup/plugin-node-resolve/-/plugin-node-resolve-16.0.1.tgz}
@@ -173,12 +188,23 @@ packages:
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==, tarball: https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz}
 
+  commondir@1.0.1:
+    resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==, tarball: https://registry.npmjs.org/commondir/-/commondir-1.0.1.tgz}
+
   deepmerge@4.3.1:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==, tarball: https://registry.npmjs.org/deepmerge/-/deepmerge-4.3.1.tgz}
     engines: {node: '>=0.10.0'}
 
   estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==, tarball: https://registry.npmjs.org/estree-walker/-/estree-walker-2.0.2.tgz}
+
+  fdir@6.4.6:
+    resolution: {integrity: sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==, tarball: https://registry.npmjs.org/fdir/-/fdir-6.4.6.tgz}
+    peerDependencies:
+      picomatch: ^3 || ^4
+    peerDependenciesMeta:
+      picomatch:
+        optional: true
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==, tarball: https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz}
@@ -199,6 +225,9 @@ packages:
   is-module@1.0.0:
     resolution: {integrity: sha512-51ypPSPCoTEIN9dy5Oy+h4pShgJmPCygKfyRCISBI+JoWT/2oJvK8QPxmwv7b/p239jXrm9M1mlQbyKJ5A152g==, tarball: https://registry.npmjs.org/is-module/-/is-module-1.0.0.tgz}
 
+  is-reference@1.2.1:
+    resolution: {integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==, tarball: https://registry.npmjs.org/is-reference/-/is-reference-1.2.1.tgz}
+
   lit-element@4.2.1:
     resolution: {integrity: sha512-WGAWRGzirAgyphK2urmYOV72tlvnxw7YfyLDgQ+OZnM9vQQBQnumQ7jUJe6unEzwGU3ahFOjuz1iz1jjrpCPuw==, tarball: https://registry.npmjs.org/lit-element/-/lit-element-4.2.1.tgz}
 
@@ -207,6 +236,9 @@ packages:
 
   lit@3.3.1:
     resolution: {integrity: sha512-Ksr/8L3PTapbdXJCk+EJVB78jDodUMaP54gD24W186zGRARvwrsPfS60wae/SSCTCNZVPd1chXqio1qHQmu4NA==, tarball: https://registry.npmjs.org/lit/-/lit-3.3.1.tgz}
+
+  magic-string@0.30.17:
+    resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==, tarball: https://registry.npmjs.org/magic-string/-/magic-string-0.30.17.tgz}
 
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==, tarball: https://registry.npmjs.org/path-parse/-/path-parse-1.0.7.tgz}
@@ -239,11 +271,25 @@ packages:
 
 snapshots:
 
+  '@jridgewell/sourcemap-codec@1.5.4': {}
+
   '@lit-labs/ssr-dom-shim@1.4.0': {}
 
   '@lit/reactive-element@2.1.1':
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.4.0
+
+  '@rollup/plugin-commonjs@28.0.6(rollup@4.45.0)':
+    dependencies:
+      '@rollup/pluginutils': 5.2.0(rollup@4.45.0)
+      commondir: 1.0.1
+      estree-walker: 2.0.2
+      fdir: 6.4.6(picomatch@4.0.2)
+      is-reference: 1.2.1
+      magic-string: 0.30.17
+      picomatch: 4.0.2
+    optionalDependencies:
+      rollup: 4.45.0
 
   '@rollup/plugin-node-resolve@16.0.1(rollup@4.45.0)':
     dependencies:
@@ -338,9 +384,15 @@ snapshots:
 
   '@types/trusted-types@2.0.7': {}
 
+  commondir@1.0.1: {}
+
   deepmerge@4.3.1: {}
 
   estree-walker@2.0.2: {}
+
+  fdir@6.4.6(picomatch@4.0.2):
+    optionalDependencies:
+      picomatch: 4.0.2
 
   fsevents@2.3.3:
     optional: true
@@ -357,6 +409,10 @@ snapshots:
 
   is-module@1.0.0: {}
 
+  is-reference@1.2.1:
+    dependencies:
+      '@types/estree': 1.0.8
+
   lit-element@4.2.1:
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.4.0
@@ -372,6 +428,10 @@ snapshots:
       '@lit/reactive-element': 2.1.1
       lit-element: 4.2.1
       lit-html: 3.3.1
+
+  magic-string@0.30.17:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.4
 
   path-parse@1.0.7: {}
 

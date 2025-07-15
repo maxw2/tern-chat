@@ -113,7 +113,7 @@ export class VirtualList extends LitElement {
   getMaxHeight() {
     const len = this.list.length - 1 || 0
     const lastPos = this.posMap.get(len)
-    return lastPos.bottom + 'px'
+    return lastPos?.bottom + 'px' || '0px'
   }
 
   initPositions() {
@@ -139,22 +139,20 @@ export class VirtualList extends LitElement {
     return html`<div class="virtual-list" @scroll=${this.onScroll}>
       <div class="list-container" style="height:${this.getMaxHeight()}"></div>
       <div class="list-items" style="transform: translateY(${this.top}px)">
-        <slot></slot>
+        ${repeat(
+          this.itemsList,
+          (_item, index) => this.startBuffer + index,
+          (item, index) =>
+            html`<div class="list-item" data-key="${this.startIdx + index}">
+              ${this.renderItem
+                ? unsafeHTML(this.renderItem(item, this.startBuffer + index))
+                : null}
+            </div>`
+        )}
       </div>
     </div>`
   }
 }
-
-//  ${repeat(
-//       this.itemsList,
-//       (_item, index) => this.startBuffer + index,
-//       (item, index) =>
-//         html`<div class="list-item" data-key="${this.startIdx + index}">
-//           ${this.renderItem
-//             ? unsafeHTML(this.renderItem(item, this.startBuffer + index))
-//             : null}
-//         </div>`
-//     )}
 
 declare global {
   interface HTMLElementTagNameMap {
