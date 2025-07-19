@@ -13,19 +13,54 @@
       rel="stylesheet"
       href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css"
     />
+    <!-- Import style -->
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+
+    <script src="//cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <!-- Import component library -->
+    <script src="//unpkg.com/element-plus"></script>
+    <script src="//unpkg.com/@element-plus/icons-vue"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../dist/index.js"></script>
   </head>
+
   <body>
     <div id="app"></div>
-    <script src="../dist/index.js"></script>
-    <script>
+
+    <script type="module">
+      import VirtualList from './example/virtualList.js'
+      import Upload from './example/uploadFile.js'
+
       window.$docsify = {
         name: '',
         repo: '',
+        alias: {
+          '/zh-cn': '/zh-cn/',
+          '/en': '/en/',
+          '/': '/en/', // 默认使用英文
+        },
+        coverpage: ['/en', '/zh-cn/'],
+        // 侧边栏加载路径
+        loadNavbar: true,
+        subMaxLevel: 5,
         loadSidebar: true,
-        subMaxLevel: 3,
+        vueComponents: {
+          'el-icon': ElementPlus.ElIcon,
+          'el-button': ElementPlus.ElButton,
+          'el-image': ElementPlus.ElImage,
+          'virtual-list': VirtualList,
+          'upload-file': Upload,
+          Compass: ElementPlusIconsVue.Compass,
+        },
       }
     </script>
     <!-- Docsify v4 -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
   </body>
+  <style>
+    .logo-img {
+      display: inline;
+    }
+  </style>
 </html>

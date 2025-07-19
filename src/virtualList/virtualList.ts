@@ -2,6 +2,7 @@ import { css, html, LitElement } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
+import { when } from 'lit/directives/when.js'
 
 interface Position {
   id: number
@@ -12,7 +13,7 @@ interface Position {
   bottom: number
 }
 
-@customElement('virtual-list')
+@customElement('tern-virtual-list')
 export class VirtualList extends LitElement {
   static styles = css`
     :host {
@@ -48,11 +49,13 @@ export class VirtualList extends LitElement {
   @property({ type: Array })
   list: Array<unknown> = []
   @property({ type: Number })
-  itemMax: number = 40
+  itemMax: number = 10
   @property({ type: Number })
   estimate: number = 50
   @property({ type: Number })
   buffer: number = 5
+  @property({ type: Boolean })
+  autoHeight: boolean = false
   @property({ type: Function })
   renderItem: (item: unknown, index: number) => string
   @property({ type: Array })
@@ -65,18 +68,10 @@ export class VirtualList extends LitElement {
   posMap: Map<number, Position> = new Map()
   bufferTop: number = 0
 
-  async onScroll(ev: Event) {
-    const target = ev.target as HTMLElement
-    const scrollTop = target.scrollTop
-
-    this.startIdx = this.findStartIndex(scrollTop)
-
-    const bufferTop =
-      this.startIdx >= this.buffer
-        ? this.buffer * this.estimate
-        : this.startIdx * this.estimate
-    this.top = scrollTop - (scrollTop % this.estimate) - bufferTop
+  connectedCallback() {
+    super.connectedCallback()
     this.getItemsList()
+    this.initPositions()
   }
 
   findStartIndex(scrollTop: number): number {
@@ -106,7 +101,14 @@ export class VirtualList extends LitElement {
     const lastBuffer = this.startIdx + this.itemMax + this.buffer
     const list = this.list.slice(this.startBuffer, lastBuffer)
     this.itemsList = list
-    this.dispatchEvent(new CustomEvent('items-list-change', { detail: list }))
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: {
+          list,
+          startIdx: this.startIdx,
+        },
+      })
+    )
     return list
   }
 
@@ -117,7 +119,7 @@ export class VirtualList extends LitElement {
   }
 
   initPositions() {
-    this.list.forEach((item, index) => {
+    this.list.forEach((_item, index) => {
       this.posMap.set(index, {
         id: index,
         index: index,
@@ -129,25 +131,39 @@ export class VirtualList extends LitElement {
     })
   }
 
-  connectedCallback() {
-    super.connectedCallback()
+  // Event
+  async onScroll(ev: Event) {
+    const target = ev.target as HTMLElement
+    const scrollTop = target.scrollTop
+
+    this.startIdx = this.findStartIndex(scrollTop)
+
+    const bufferTop =
+      this.startIdx >= this.buffer
+        ? this.buffer * this.estimate
+        : this.startIdx * this.estimate
+    this.top = scrollTop - (scrollTop % this.estimate) - bufferTop
     this.getItemsList()
-    this.initPositions()
   }
 
   render() {
     return html`<div class="virtual-list" @scroll=${this.onScroll}>
       <div class="list-container" style="height:${this.getMaxHeight()}"></div>
       <div class="list-items" style="transform: translateY(${this.top}px)">
-        ${repeat(
-          this.itemsList,
-          (_item, index) => this.startBuffer + index,
-          (item, index) =>
-            html`<div class="list-item" data-key="${this.startIdx + index}">
-              ${this.renderItem
-                ? unsafeHTML(this.renderItem(item, this.startBuffer + index))
-                : null}
-            </div>`
+        ${when(
+          this.renderItem,
+          () =>
+            repeat(
+              this.itemsList,
+              (_item, index) => this.startBuffer + index,
+              (item, index) => html`<div
+                class="list-item"
+                data-key="${this.startIdx + index}"
+              >
+                ${unsafeHTML(this.renderItem(item, this.startBuffer + index))}
+              </div>`
+            ),
+          () => html`<slot></slot>`
         )}
       </div>
     </div>`
