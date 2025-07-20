@@ -69,7 +69,7 @@ export default {
 | 事件名   | 描述               | 事件内容结构                                                                |
 | -------- | ------------------ | --------------------------------------------------------------------------- |
 | `change` | 文件列表变化时触发 | `{ detail: { fileList: UploadFile[] } }`                                    |
-| `error`  | 错误发生时触发     | `{ detail: { message: string, maxCount: number, fileList: UploadFile[] } }` |
+| `error`  | 错误发生时触发     | `{ detail: { message: string, limit: number, fileList: UploadFile[] } }` |
 
 ## UploadFile Slots
 
