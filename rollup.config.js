@@ -10,8 +10,7 @@ export default defineConfig({
   output: [
     {
       dir: 'dist',
-      format: 'esm',
-
+      format: 'esm'
     },
     {
       dir: 'dist',

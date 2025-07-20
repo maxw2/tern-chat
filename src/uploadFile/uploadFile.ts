@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit'
+import { css, html, LitElement, PropertyValues } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
 
 interface UploadFile {
@@ -14,6 +14,7 @@ interface XMLOptions {
   action: string
   method: string
   name: string
+  withCredentials: boolean
   filesList: Array<UploadFile>
 }
 
@@ -24,6 +25,9 @@ interface Progress extends ProgressEvent<XMLHttpRequestEventTarget> {
 @customElement('tern-upload-file')
 export class Upload extends LitElement {
   static styles = css`
+    :host {
+      display: inline-flex;
+    }
     .upload input[type='file'] {
       display: none;
     }
@@ -43,45 +47,51 @@ export class Upload extends LitElement {
   action: string = '#'
   @property({ type: Number })
   method: string = 'POST'
+  @property({ type: Boolean })
+  withCredentials: boolean = false
   @property({ type: String })
   name: string = 'file'
   @property({ type: Function })
-  httpRequest: Function | null = null
+  httpRequest: (fileList: Array<UploadFile>) => any
   @property({ type: Boolean })
-  autoUpload: Boolean = true
-  @property({ type: String })
-  maxCount: number = 1
+  autoUpload: boolean = true
+  @property({ type: Number })
+  limit: number = 1
   @property({ type: Function })
-  onProgress?: (evt: Progress) => void
+  httpProgress?: (evt: Progress) => void
   @property({ type: Function })
-  onSuccess?: (evt: XMLHttpRequest) => void
+  httpSuccess?: (evt: XMLHttpRequest) => void
   @property({ type: Function })
-  onError?: (evt: XMLHttpRequest) => void
+  httpError?: (evt: XMLHttpRequest) => void
+  @property({ type: Function })
+  beforeUpload: (fileList: Array<UploadFile>) => Promise<Array<UploadFile>>
   @property({ type: Array })
   private fileList: Array<UploadFile> = []
 
-  _onchange = new CustomEvent('change', {
-    detail: { fileList: this.fileList },
+  _onChange = new CustomEvent('change', {
+    detail: { fileList: [...this.fileList] },
+  })
+  _onError = new CustomEvent('error', {
+    detail: {
+      fileList: [...this.fileList],
+      message: '超出数量限制',
+      limit: this.limit,
+    },
+    // bubbles: true,
+    // composed: true,
   })
 
   async changeEvent(ev: Event) {
     const files = (ev.target as HTMLInputElement).files
-    if (this.fileList.length + files.length > this.maxCount) {
-      this.dispatchEvent(
-        new CustomEvent('error', {
-          detail: {
-            fileList: this.fileList,
-            message: '超出数量限制',
-            maxCount: this.maxCount,
-          },
-          // bubbles: true,
-          // composed: true,
-        })
-      )
+    if (this.fileList.length + files.length > this.limit && this.limit > 1) {
+      this.dispatchEvent(this._onError)
       // ❌ 超出数量限制
       this.inputEl.value = '' // 清空选择，阻止继续
       return
     }
+
+    if (this.limit === 1) this.fileList.pop()
+
     if (files.length) {
       await Promise.allSettled(
         Array.from(files).map((val) => fileToBase64(val))
@@ -97,27 +107,46 @@ export class Upload extends LitElement {
           }
         })
       })
-      this.dispatchEvent(this._onchange)
-      if(this.autoUpload) this.submit()
+      this.dispatchEvent(this._onChange)
+      if (this.autoUpload) this.submit()
     }
   }
 
   submit() {
-    console.log(this.onError, 'onError')
-    if (this.httpRequest) this.httpRequest()
-    else {
-      fileRequest(
-        {
-          headers: this.headers,
-          action: this.action,
-          name: this.name,
-          method: this.method,
-          filesList: this.fileList,
-        },
-        this.onProgress,
-        this.onSuccess,
-        this.onError
-      )
+    if (this.httpRequest) {
+      this.beforeUpload
+        ? this.beforeUpload(this.fileList).then(this.httpRequest)
+        : this.httpRequest(this.fileList)
+    } else {
+      this.beforeUpload
+        ? this.beforeUpload(this.fileList).then((ev) =>
+            fileRequest(
+              {
+                headers: this.headers,
+                action: this.action,
+                name: this.name,
+                method: this.method,
+                withCredentials: this.withCredentials,
+                filesList: ev,
+              },
+              this.httpProgress,
+              this.httpSuccess,
+              this.httpError
+            )
+          )
+        : fileRequest(
+            {
+              headers: this.headers,
+              action: this.action,
+              name: this.name,
+              method: this.method,
+              withCredentials: this.withCredentials,
+              filesList: this.fileList,
+            },
+            this.httpProgress,
+            this.httpSuccess,
+            this.httpError
+          )
     }
   }
 
@@ -137,9 +166,9 @@ export class Upload extends LitElement {
 
 function fileRequest(
   option: XMLOptions,
-  onProgress: (evt: Progress) => void,
-  onSuccess: (evt: XMLHttpRequest) => void,
-  onError: (evt: XMLHttpRequest) => void
+  httpProgress: (evt: Progress) => void,
+  httpSuccess: (evt: XMLHttpRequest) => void,
+  httpError: (evt: XMLHttpRequest) => void
 ) {
   const xhr = new XMLHttpRequest()
 
@@ -155,26 +184,26 @@ function fileRequest(
       option.filesList.forEach((val) => {
         val.status = 'error'
       })
-      return onError && onError(xhr)
+      return httpError && httpError(xhr)
     }
     option.filesList.forEach((val) => {
       val.status = 'success'
     })
-    onSuccess && onSuccess(xhr)
+    httpSuccess && httpSuccess(xhr)
   })
 
   xhr.addEventListener('error', () => {
     option.filesList.forEach((val) => {
       val.status = 'error'
     })
-    onError && onError(xhr)
+    httpError && httpError(xhr)
   })
 
   xhr.addEventListener(
     'progress',
     (evt: ProgressEvent<XMLHttpRequestEventTarget>) => {
       const percent = evt.total > 0 ? (evt.loaded / evt.total) * 100 : 0
-      onProgress({ ...evt, percent })
+      httpProgress && httpProgress({ ...evt, percent })
     }
   )
 
@@ -184,7 +213,7 @@ function fileRequest(
       xhr.setRequestHeader(key, value)
     }
   }
-
+  xhr.withCredentials = option.withCredentials
   xhr.send(formData)
 
   return xhr

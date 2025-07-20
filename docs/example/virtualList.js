@@ -4,7 +4,7 @@ export default {
       list: new Array(10000).fill(0).map((_, i) => i),
       currentList: [],
       renderItem(item) {
-        return `<div class='h-[50px]' style='height: 50px;'>${item} + vue</div>`
+        return `<div class='h-[50px]' style='height: 50px;'>${item} + renderItems</div>`
       },
     }
   },
@@ -16,7 +16,8 @@ export default {
   template: `
     <tern-virtual-list
       class='w-[500px] h-[300px]' 
-      :list="list" 
+      :list="list"
+      :renderItem="renderItem"
       @change="change"
     >
       <div v-for="item in currentList" :key="item" class="h-[50px]" >{{item}}</div>
