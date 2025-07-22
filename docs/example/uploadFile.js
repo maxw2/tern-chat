@@ -1,34 +1,40 @@
-export default {
-    data() {
-        return {
-            list: []
-        }
-    },
-    methods: {
-        change({ detail }) {
-            this.list = detail.fileList
+// export default {
+//     data() {
+//         return {
+//             list: []
+//         }
+//     },
+//     methods: {
+//         change({ detail }) {
+//             this.list = detail.fileList
 
-        },
-        error({ detail }) {
-            console.log(detail, 'error')
-        },
-        httpError(err) {
-            console.log('httpError', err)
-        }
-    },
+//         },
+//         error({ detail }) {
+//             console.log(detail, 'error')
+//         },
+//         httpError(err) {
+//             console.log('httpError', err)
+//         }
+//     },
+//     template: `
+//         <div>
+//             <tern-upload-file @change="change" @error="error" :httpError="httpError">
+//                 <el-button>上传</el-button>
+//             </tern-upload-file>
+//             <el-image 
+//                 class='w-[200px] h-[200px]' 
+//                 v-for="(item,index) in list" 
+//                 :key="item.uid"
+//                 :src="item.baseURL" 
+//                 :preview-src-list="[item.baseURL]" 
+//                 :initial-index="0" 
+//             />
+//         </div>
+//     `
+// }
+
+export default {
     template: `
-        <div>
-            <tern-upload-file @change="change" @error="error" :httpError="httpError">
-                <el-button>上传</el-button>
-            </tern-upload-file>
-            <el-image 
-                class='w-[200px] h-[200px]' 
-                v-for="(item,index) in list" 
-                :key="item.uid"
-                :src="item.baseURL" 
-                :preview-src-list="[item.baseURL]" 
-                :initial-index="0" 
-            />
-        </div>
-    `
+            <tern-textarea id="story" name="story" rows="5" cols="33"></tern-textarea>
+        `
 }

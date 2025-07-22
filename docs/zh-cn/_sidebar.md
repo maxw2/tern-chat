@@ -5,8 +5,8 @@
 - 基础组件
   
   - [虚拟列表](zh-cn/virtualList.md)
-  - [上传图片](zh-cn/uploadFile.md)
-  - [插件列表](zh-cn/plugins.md)
+  - [文件上传](zh-cn/uploadFile.md)
+  - [图片展示](zh-cn/image.md)
   - [开发插件](zh-cn/write-a-plugin.md)
   - [Markdown 配置](zh-cn/markdown.md)
   - [代码高亮](zh-cn/language-highlight.md)
@@ -14,7 +14,7 @@
 - 指南
 
   - [部署](zh-cn/deploy.md)
-  - [文档助手](zh-cn/helpers.md)
+  - [文档助手](zh-cn/helpers.md)image
   - [兼容 Vue](zh-cn/vue.md)
   - [CDN](zh-cn/cdn.md)
   - [离线模式(PWA)](zh-cn/pwa.md)
