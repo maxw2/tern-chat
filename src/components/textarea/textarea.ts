@@ -3,7 +3,7 @@ import { customElement } from "lit/decorators.js";
 import { spreadAttributes } from "../../utils/index.js";
 
 @customElement('tern-textarea')
-export class TextArea extends LitElement { 
+export class TernTextArea extends LitElement { 
     firstUpdated(_changedProperties: PropertyValues): void {
         console.log('firstUpdated', this.attributes)    
         console.log('cloneAttributes(this)', spreadAttributes(this))

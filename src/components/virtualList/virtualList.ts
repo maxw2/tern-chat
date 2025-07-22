@@ -14,7 +14,7 @@ interface Position {
 }
 
 @customElement('tern-virtual-list')
-export class VirtualList extends LitElement {
+export class TernVirtualList extends LitElement {
   static styles = css`
     :host {
       display: block;
@@ -172,6 +172,6 @@ export class VirtualList extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'virtual-list': VirtualList
+    'tern-virtual-list': TernVirtualList
   }
 }

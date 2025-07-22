@@ -5,7 +5,7 @@ import { when } from 'lit/directives/when.js'
 type ImageState = 'init' | 'loading' | 'error' | 'success'
 
 @customElement('tern-image')
-export class TrenImage extends LitElement {
+export class TernImage extends LitElement {
   static styles = css`
     :host {
       display: block;

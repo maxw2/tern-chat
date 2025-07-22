@@ -23,7 +23,7 @@ interface Progress extends ProgressEvent<XMLHttpRequestEventTarget> {
 }
 
 @customElement('tern-upload-file')
-export class Upload extends LitElement {
+export class TernUpload extends LitElement {
   static styles = css`
     :host {
       display: inline-flex;
