@@ -6,8 +6,8 @@ export default {
     },
     methods: {
         change({ detail }) {
-            this.list = detail.fileList
-            console.log(this.list)
+            this.list = [...detail.fileList]
+            console.log(detail)
         },
         error({ detail }) {
             console.log(detail, 'error')

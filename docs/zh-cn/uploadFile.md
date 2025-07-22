@@ -16,7 +16,8 @@ export default {
   },
   methods: {
     change({ detail }) {
-      this.list = detail.fileList
+      this.list = [...detail.fileList]
+      console.log(detail)
     },
     error({ detail }) {
       console.log(detail, 'error')
@@ -66,9 +67,9 @@ export default {
 
 ## UploadFile Events
 
-| 事件名   | 描述               | 事件内容结构                                                                |
-| -------- | ------------------ | --------------------------------------------------------------------------- |
-| `change` | 文件列表变化时触发 | `{ detail: { fileList: UploadFile[] } }`                                    |
+| 事件名   | 描述               | 事件内容结构                                                             |
+| -------- | ------------------ | ------------------------------------------------------------------------ |
+| `change` | 文件列表变化时触发 | `{ detail: { fileList: UploadFile[] } }`                                 |
 | `error`  | 错误发生时触发     | `{ detail: { message: string, limit: number, fileList: UploadFile[] } }` |
 
 ## UploadFile Slots

@@ -69,11 +69,11 @@ export class TernUpload extends LitElement {
   private fileList: Array<UploadFile> = []
 
   _onChange = new CustomEvent('change', {
-    detail: { fileList: [...this.fileList] },
+    detail: { fileList: this.fileList },
   })
   _onError = new CustomEvent('error', {
     detail: {
-      fileList: [...this.fileList],
+      fileList: this.fileList,
       message: '超出数量限制',
       limit: this.limit,
     },
