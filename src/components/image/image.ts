@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
+import './preview.js'
 
 type ImageState = 'init' | 'loading' | 'error' | 'success'
 
@@ -30,7 +31,7 @@ export class TernImage extends LitElement {
 
   @query('.image')
   contentEl: HTMLDivElement
-  @query('.image img')
+  @query('.image .default-image')
   imgEl: HTMLImageElement
 
   @property({ type: String })
@@ -57,6 +58,7 @@ export class TernImage extends LitElement {
   private isHover: boolean = false
   private timeout: number
   private observer: IntersectionObserver
+
   onImageLoad() {
     setTimeout(() => {
       this.imageState = 'success'
@@ -75,6 +77,12 @@ export class TernImage extends LitElement {
 
   onMouseleave(ev) {
     this.isHover = false
+  }
+
+  showPreview() {
+    const preview = document.createElement('tern-preview')
+    preview.src = this.src
+    document.body.appendChild(preview)
   }
 
   firstUpdated() {
@@ -96,13 +104,21 @@ export class TernImage extends LitElement {
   }
 
   render() {
-    return html`<div class="image" @mouseenter="${this.onMouseenter}" @mouseleave="${this.onMouseleave}">
-      <img
-        alt="${this.alt}"
-        style="object-fit: ${this.fit}"
-        @load="${this.onImageLoad}"
-        @error="${this.onImageError}"
-      />
+    return html`<div
+      class="image"
+      @mouseenter="${this.onMouseenter}"
+      @mouseleave="${this.onMouseleave}"
+      @click="${this.showPreview}"
+    >
+      ${this.imageState !== 'error'
+        ? html`<img
+            class="default-image"
+            alt="${this.alt}"
+            style="object-fit: ${this.fit}"
+            @load="${this.onImageLoad}"
+            @error="${this.onImageError}"
+          />`
+        : null}
       ${this.imageState === 'init' || this.imageState === 'loading'
         ? when(
             this.placeholder,
@@ -117,10 +133,19 @@ export class TernImage extends LitElement {
             </div>`
           )
         : null}
-      ${!this.errorSrc && this.imageState === 'error'
-        ? html`<div class="placeholder placeholder-error">
-            <slot name="error"></slot>
-          </div>`
+      ${this.imageState === 'error'
+        ? when(
+            this.errorSrc,
+            () => html` <img
+              class="placeholder placeholder-error"
+              src="${this.errorSrc}"
+              alt="${this.alt}"
+              style="object-fit: ${this.fit}"
+            />`,
+            () => html`<div class="placeholder placeholder-error">
+              <slot name="error"></slot>
+            </div>`
+          )
         : null}
       ${this.isHover && this.imageState === 'success'
         ? html` <div class="placeholder placeholder-preview">
