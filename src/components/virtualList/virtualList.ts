@@ -56,7 +56,7 @@ export class TernVirtualList extends LitElement {
   buffer: number = 5
   @property({ type: Boolean })
   autoHeight: boolean = false
-  @property({ type: Function })
+  @property({ attribute: false })
   renderItem: (item: unknown, index: number) => string
   @property({ type: Array })
   private itemsList: unknown[] = []

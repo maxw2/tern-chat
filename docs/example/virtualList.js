@@ -15,7 +15,7 @@ export default {
   },
   template: `
     <tern-virtual-list
-      class='w-[500px] h-[300px]' 
+      class='w-[100%] h-[300px]' 
       :list="list"
       :renderItem="renderItem"
       @change="change"

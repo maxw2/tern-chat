@@ -32,6 +32,7 @@
       import VirtualList from './example/virtualList.js'
       import Upload from './example/uploadFile.js'
       import Image from './example/image.js'
+      import EmojiBox from './example/emojiBox.js'
 
       window.$docsify = {
         name: '',
@@ -44,16 +45,18 @@
         },
         coverpage: ['/en', '/zh-cn/'],
         // 侧边栏加载路径
-        // loadNavbar: true,
+        loadNavbar: true,
         subMaxLevel: 5,
         loadSidebar: true,
         vueComponents: {
-          'el-icon': ElementPlus.ElIcon,
-          'el-button': ElementPlus.ElButton,
-          'el-image': ElementPlus.ElImage,
           'virtual-list': VirtualList,
           'upload-file': Upload,
           'image-load': Image,
+          'emoji-box': EmojiBox,
+          'el-icon': ElementPlus.ElIcon,
+          'el-button': ElementPlus.ElButton,
+          'el-image': ElementPlus.ElImage,
+          'el-popover': ElementPlus.ElPopover,
           Compass: ElementPlusIconsVue.Compass,
         },
       }
@@ -64,6 +67,9 @@
   <style>
     .logo-img {
       display: inline;
+    }
+    .image {
+      background: red;
     }
   </style>
 </html>

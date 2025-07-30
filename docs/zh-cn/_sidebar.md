@@ -7,7 +7,7 @@
   - [虚拟列表](zh-cn/virtualList.md)
   - [文件上传](zh-cn/uploadFile.md)
   - [图片展示](zh-cn/image.md)
-  - [开发插件](zh-cn/write-a-plugin.md)
+  - [表情包](zh-cn/emojiBox.md)
   - [Markdown 配置](zh-cn/markdown.md)
   - [代码高亮](zh-cn/language-highlight.md)
 

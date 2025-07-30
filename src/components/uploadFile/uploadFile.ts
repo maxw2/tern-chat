@@ -45,7 +45,7 @@ export class TernUpload extends LitElement {
   headers: object = {}
   @property({ type: String })
   action: string = '#'
-  @property({ type: Number })
+  @property({ type: String })
   method: string = 'POST'
   @property({ type: Boolean })
   withCredentials: boolean = false
