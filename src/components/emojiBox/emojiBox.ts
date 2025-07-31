@@ -28,15 +28,15 @@ export class TernEmojiBox extends LitElement {
         background: #f4f4f5;
         padding: 2px;
         box-sizing: border-box;
-        overflow-x: auto;
         .tab {
-          float: left;
-          display: inline-block;
+          text-align: center;
+          line-height: 34px;
           cursor: pointer;
           width: 76px;
           height: 34px;
+          box-sizing: border-box;
         }
-        .active {
+        .tern-scroll-active {
           border-radius: 4px;
           background: white;
         }
@@ -348,20 +348,32 @@ export class TernEmojiBox extends LitElement {
 
   render() {
     return html`<div class="emoji-box">
-      <div class="tabs">
+      <tern-scroll class='tabs' align="start">
+        ${this.emojiList.map(
+          (tab, idx) => html`<div
+            class="tab"
+            @click=${() => (this.index = idx)}
+          >
+            <span class="icon">${tab.icon}</span>
+          </div>`
+        )}
+      </tern-scroll>
+      <!-- <div class="tabs">
         <div style="width: ${this.emojiList.length * 76}px">
           ${this.emojiList.map(
-            (tab, idx) => html`<span
-                class="tab ${this.index === idx ? 'active' : null}"
-                @click=${() => (this.index = idx)}>
-                <span class="icon">${tab.icon}</span>
-              </span>`
-          )}
+        (tab, idx) => html`<span
+          class="tab ${this.index === idx ? 'active' : null}"
+          @click=${() => (this.index = idx)}
+        >
+          <span class="icon">${tab.icon}</span>
+        </span>`
+      )}
         </div>
-      </div>
+      </div> -->
       <div class="list">
         ${this.emojiList[this.index].list.map(
-          (item) => html`<div class="item"><div class="icon">${item}</div></div>`
+          (item) =>
+            html`<div class="item"><div class="icon">${item}</div></div>`
         )}
       </div>
     </div>`
