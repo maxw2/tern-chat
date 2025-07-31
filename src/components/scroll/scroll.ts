@@ -1,5 +1,11 @@
-import { css, html, LitElement } from 'lit'
-import { customElement, property, query, state } from 'lit/decorators.js'
+import { css, html, LitElement, PropertyValues } from 'lit'
+import {
+  customElement,
+  property,
+  query,
+  queryAssignedElements,
+  state,
+} from 'lit/decorators.js'
 
 interface Page {
   startX: number
@@ -14,6 +20,7 @@ interface Page {
   contentHeight: number
   scrollWidth: number
   scrollHeight: number
+  currentTaget: HTMLElement
 }
 
 type PropsAlign = 'start' | 'center' | 'none'
@@ -44,6 +51,8 @@ export class TernScroll extends LitElement {
   contentEl: HTMLDivElement
   @query('slot')
   slotEl: HTMLSlotElement
+  @queryAssignedElements()
+  slotList: Array<HTMLElement>
 
   @property({ type: String })
   align: PropsAlign = 'none'
@@ -62,6 +71,7 @@ export class TernScroll extends LitElement {
     contentHeight: 0,
     scrollWidth: 0,
     scrollHeight: 0,
+    currentTaget: null,
   }
 
   connectedCallback(): void {
@@ -69,6 +79,12 @@ export class TernScroll extends LitElement {
     window.addEventListener('pointermove', this.onMouseMove)
     window.addEventListener('pointerup', this.onMouseUp)
     window.addEventListener('pointerleave', this.onMouseUp)
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+    Array.from(this.slotList).forEach((ele) => {
+      ele.addEventListener('click', this.onClickAlign.bind(this))
+    })
   }
 
   disconnectedCallback(): void {
@@ -138,14 +154,36 @@ export class TernScroll extends LitElement {
     this.contentEl.style.transform = `translateX(${this.page.x}px)`
   }
 
-  private onClick(ev: MouseEvent) {
-    const target = ev.target as HTMLElement
+  private onClickAlign(ev: MouseEvent) {
+    const target = ev.currentTarget as HTMLElement
+    if (this.page.currentTaget) {
+      this.page.currentTaget.classList.remove('tern-scroll-active')
+      target.classList.add('tern-scroll-active')
+      this.page.currentTaget = target
+    } else {
+      target.classList.add('tern-scroll-active')
+      this.page.currentTaget = target
+    }
 
-    if (
-      !this.page.isMove &&
-      -target.offsetLeft > -(this.page.contentWidth - this.page.scrollWidth)
-    )
-      this.smoothScrollTo(-target.offsetLeft)
+    if (this.align === 'none') return
+    else if (this.page.isMove) return
+    else if (this.align === 'start') {
+      if (
+        -target.offsetLeft > -(this.page.contentWidth - this.page.scrollWidth)
+      ) {
+        this.smoothScrollTo(-target.offsetLeft)
+      } else {
+        this.smoothScrollTo(-(this.page.contentWidth - this.page.scrollWidth))
+      }
+    } else if (this.align === 'center') {
+      const left =
+        target.offsetLeft - this.page.scrollWidth / 2 + target.clientWidth / 2
+
+      if (-left > 0) this.smoothScrollTo(0)
+      else if (-left < -(this.page.contentWidth - this.page.scrollWidth))
+        this.smoothScrollTo(-(this.page.contentWidth - this.page.scrollWidth))
+      else this.smoothScrollTo(-left)
+    }
   }
 
   smoothScrollTo(target: number) {
@@ -158,7 +196,7 @@ export class TernScroll extends LitElement {
       @wheel=${this.onWheel}
       @pointerdown=${this.onMouseDown}
     >
-      <div class="scroll-content" @click=${this.onClick}>
+      <div class="scroll-content">
         <slot></slot>
       </div>
     </div>`
