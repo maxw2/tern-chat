@@ -23,6 +23,12 @@ interface Page {
   currentTaget: HTMLElement
 }
 
+interface Size {
+  width: number
+  height: number
+}
+
+
 type PropsAlign = 'start' | 'center' | 'none'
 
 @customElement('tern-scroll')
@@ -236,20 +242,14 @@ function easeOut(t: number, b: number, c: number, d: number): number {
   return c * (t * t * t + 1) + b
 }
 
-function getScrollSize(el: HTMLElement): {
-  width: number
-  height: number
-} {
+function getScrollSize(el: HTMLElement): Size{
   return {
-    width: el.clientWidth,
-    height: el.clientHeight,
+    width: el.offsetWidth,
+    height: el.offsetHeight,
   }
 }
 
-function getContentSize(slot: HTMLSlotElement): {
-  width: number
-  height: number
-} {
+function getContentSize(slot: HTMLSlotElement): Size {
   const assignedElements = slot.assignedElements({ flatten: true })
   const len = assignedElements.length
   const lastEle = assignedElements[len - 1]
