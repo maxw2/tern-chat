@@ -11,15 +11,6 @@
   - [滚动组件](zh-cn/scroll.md)
   - [代码高亮](zh-cn/language-highlight.md)
 
-- 指南
+- 组合组件
 
-  - [部署](zh-cn/deploy.md)
-  - [文档助手](zh-cn/helpers.md)image
-  - [兼容 Vue](zh-cn/vue.md)
-  - [CDN](zh-cn/cdn.md)
-  - [离线模式(PWA)](zh-cn/pwa.md)
-  - [服务端渲染 (SSR)](zh-cn/ssr.md)
-  - [文件嵌入](zh-cn/embed-files.md)
-
-- [Awesome docsify](zh-cn/awesome.md)
-- [Changelog](zh-cn/changelog.md)
+  - [聊天框](zh-cn/chart.md)

@@ -72,7 +72,7 @@ export class TernPreview extends LitElement {
         max-height: 50%;
         cursor: grab;
         user-select: none;
-        user-drag: none;
+        /* user-drag: none; */
         -webkit-user-drag: none;
         pointer-events: auto;
       }
