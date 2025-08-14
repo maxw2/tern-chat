@@ -15,11 +15,11 @@ export default {
   },
   template: `
     <tern-virtual-list
-      class='w-[100%] h-[300px]' 
+      class='w-[400px] h-[300px]' 
       :list="list"
       :renderItem="renderItem"
       @change="change"
     >
       <div v-for="item in currentList" :key="item" class="h-[50px]" >{{item}}</div>
-    </tern-virtual-list>`,
+    </tern-virtual-list>`
 }

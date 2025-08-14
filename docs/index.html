@@ -19,23 +19,19 @@
     <script src="//cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <!-- Import component library -->
     <script src="//unpkg.com/element-plus"></script>
-    <script src="//unpkg.com/@element-plus/icons-vue"></script>
-
+    <!-- <script src="//unpkg.com/@element-plus/icons-vue"></script> -->
+    <!-- tailwindcss -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- mockjs -->
+    <script src="https://cdn.jsdelivr.net/npm/mockjs@1.1.0/dist/mock.min.js"></script>
+    <!-- tern-chat -->
     <script src="../dist/index.js"></script>
   </head>
 
   <body>
     <div id="app"></div>
 
-    <script type="module">
-      import VirtualList from './example/virtualList.js'
-      import Upload from './example/uploadFile.js'
-      import Image from './example/image.js'
-      import EmojiBox from './example/emojiBox.js'
-      import Scroll from './example/scroll.js'
-      import Chart from './example/chart.js'
-
+    <script>
       window.$docsify = {
         name: '',
         repo: '',
@@ -45,28 +41,16 @@
           '/en': '/en/',
           '/': '/en/', // 默认使用英文
         },
-        coverpage: ['/en', '/zh-cn/'],
+        coverpage: ['/en/', '/zh-cn/'],
         // 侧边栏加载路径
         loadNavbar: true,
         subMaxLevel: 5,
         loadSidebar: true,
-        vueComponents: {
-          'virtual-list': VirtualList,
-          'upload-file': Upload,
-          'image-load': Image,
-          'emoji-box': EmojiBox,
-          'scroll': Scroll,
-          'chart': Chart,
-          'el-icon': ElementPlus.ElIcon,
-          'el-button': ElementPlus.ElButton,
-          'el-image': ElementPlus.ElImage,
-          'el-popover': ElementPlus.ElPopover,
-          Compass: ElementPlusIconsVue.Compass,
-        },
       }
     </script>
     <!-- Docsify v4 -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="./index.js" type="module"></script>
   </body>
   <style>
     .logo-img {

@@ -9,7 +9,6 @@
   - [图片展示](zh-cn/image.md)
   - [表情包](zh-cn/emojiBox.md)
   - [滚动组件](zh-cn/scroll.md)
-  - [代码高亮](zh-cn/language-highlight.md)
 
 - 组合组件
 

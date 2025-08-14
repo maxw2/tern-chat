@@ -1,8 +1,9 @@
-import { css, html, LitElement } from 'lit'
-import { customElement, property, query } from 'lit/decorators.js'
+import { css, html, LitElement, PropertyValues } from 'lit'
+import { customElement, property, query, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { unsafeHTML } from 'lit/directives/unsafe-html.js'
 import { when } from 'lit/directives/when.js'
+import { debounce, isScrollDown } from '../../utils/index.js'
 
 interface Position {
   id: number
@@ -45,6 +46,8 @@ export class TernVirtualList extends LitElement {
   itemEl!: HTMLDivElement
   @query('.list-item')
   itemEls!: HTMLDivElement
+  @query('slot')
+  slotElement!: HTMLSlotElement
 
   @property({ type: Array })
   list: Array<unknown> = []
@@ -60,18 +63,28 @@ export class TernVirtualList extends LitElement {
   renderItem: (item: unknown, index: number) => string
   @property({ type: Array })
   private itemsList: unknown[] = []
-  @property({ type: Number })
-  private top: number = 0
 
+  @state()
+  private top: number = 0
+  @state()
+  private maxHeight = '0px'
   startIdx = 0
   startBuffer = 0
   posMap: Map<number, Position> = new Map()
-  bufferTop: number = 0
+  observer: Array<ResizeObserver> = []
+  cacheScrollTop: number = 0
 
   connectedCallback() {
     super.connectedCallback()
     this.getItemsList()
     this.initPositions()
+  }
+
+  firstUpdated(_changedProperties: PropertyValues): void {
+    if (this.autoHeight) {
+      this.resizeObserver()
+      this.getMaxHeight()
+    }
   }
 
   findStartIndex(scrollTop: number): number {
@@ -115,6 +128,7 @@ export class TernVirtualList extends LitElement {
   getMaxHeight() {
     const len = this.list.length - 1 || 0
     const lastPos = this.posMap.get(len)
+    this.maxHeight = lastPos?.bottom + 'px' || '0px'
     return lastPos?.bottom + 'px' || '0px'
   }
 
@@ -131,24 +145,101 @@ export class TernVirtualList extends LitElement {
     })
   }
 
+  resizeObserver(isObserver: boolean = true) {
+    const children = this.renderItem
+      ? this.itemEl.children
+      : this.slotElement.assignedElements()
+    if (this.observer.length) this.observer.forEach((obs) => obs.disconnect())
+    this.observer = []
+    if (!isObserver) return
+    Array.from(children).forEach((el, index) => {
+      const resizeObserver = new ResizeObserver((entries) => {
+        const idx = this.startIdx + index
+        const entrie = entries[0]
+        const rootNode = entrie.target.getRootNode()
+        const stillInDOM =
+          (rootNode instanceof Document && document.contains(entrie.target)) ||
+          (rootNode instanceof ShadowRoot && rootNode.host.isConnected)
+
+        if (stillInDOM) {
+          const prev = this.posMap.get(idx - 1)
+          const top = prev ? prev.bottom : 0
+          const styles = getComputedStyle(entrie.target)
+          const marginBottom = parseFloat(styles.marginBottom)
+
+          this.posMap.set(idx, {
+            id: idx,
+            index: idx,
+            width: entrie.borderBoxSize[0].inlineSize,
+            height: entrie.borderBoxSize[0].blockSize,
+            top: top,
+            bottom: top + entrie.borderBoxSize[0].blockSize + marginBottom,
+          })
+        }
+
+        // 修正其余数据
+        if (index >= children.length - 1) {
+          const size = this.posMap.size
+          let top = this.posMap.get(idx).top
+
+          for (let i = idx + 1; i < size; i++) {
+            const tarPos = this.posMap.get(i)
+            this.posMap.set(i, {
+              ...tarPos,
+              top: top,
+              bottom: top + tarPos.height,
+            })
+            top = top + tarPos.height
+          }
+        }
+      })
+      resizeObserver.observe(el)
+      this.observer.push(resizeObserver)
+    })
+  }
+
+  fn = debounce(this.resizeObserver, 100)
+
   // Event
-  async onScroll(ev: Event) {
+  onScroll(ev: Event) {
     const target = ev.target as HTMLElement
     const scrollTop = target.scrollTop
+    const isDown = isScrollDown(this.cacheScrollTop, scrollTop)
+    if (this.autoHeight) {
+      window.requestAnimationFrame(() => {
+        // this.resizeObserver(isDown)
+        this.fn(isDown)
+        this.startIdx = this.findStartIndex(scrollTop)
+        this.getItemsList()
 
-    this.startIdx = this.findStartIndex(scrollTop)
+        const curPos = this.posMap.get(this.startIdx)
+        const bufferTop =
+          this.startIdx >= this.buffer
+            ? this.posMap.get(this.buffer).top
+            : curPos.top
 
-    const bufferTop =
-      this.startIdx >= this.buffer
-        ? this.buffer * this.estimate
-        : this.startIdx * this.estimate
-    this.top = scrollTop - (scrollTop % this.estimate) - bufferTop
-    this.getItemsList()
+        this.top = scrollTop - (scrollTop % curPos.top) - bufferTop
+      })
+    } else {
+      this.startIdx = this.findStartIndex(scrollTop)
+      this.getItemsList()
+
+      const curPos = this.posMap.get(this.startIdx)
+      const bufferTop =
+        this.startIdx >= this.buffer
+          ? this.posMap.get(this.buffer).top
+          : curPos.top
+
+      this.top = scrollTop - (scrollTop % curPos.top) - bufferTop
+    }
+
+    this.getMaxHeight()
+    this.cacheScrollTop = scrollTop
   }
 
   render() {
     return html`<div class="virtual-list" @scroll=${this.onScroll}>
-      <div class="list-container" style="height:${this.getMaxHeight()}"></div>
+      <div class="list-container" style="height:${this.maxHeight}"></div>
       <div class="list-items" style="transform: translateY(${this.top}px)">
         ${when(
           this.renderItem,

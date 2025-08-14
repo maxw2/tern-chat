@@ -45,7 +45,7 @@ export class TernImage extends LitElement {
   @property({ type: Boolean })
   lazy: boolean = true
   @property({ type: String })
-  fit: string = 'cover'
+  fit: string = 'contain'
   @property({ type: Number })
   throttle: number = 500
   @property({ type: Number })
