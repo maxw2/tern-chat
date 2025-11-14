@@ -1,19 +1,22 @@
 // rollup.config.js
+import { defineConfig } from 'rollup'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import del from 'rollup-plugin-delete'
-import { defineConfig } from 'rollup'
+import terser from '@rollup/plugin-terser';
+import { visualizer } from "rollup-plugin-visualizer";
+
 
 export default defineConfig({
-  input: './index.ts',
+  input: './src/index.ts',
   output: [
     {
-      dir: 'dist',
+      file: 'dist/index.esm.js',
       format: 'esm'
     },
     {
-      dir: 'dist',
+      file: 'dist/index.iife.js',
       format: 'iife',
       name: 'tern'
     }
@@ -25,6 +28,14 @@ export default defineConfig({
     nodeResolve({
       extensions: ['.js', '.ts']
     }),
-    typescript()
+    typescript(),
+    terser(),
+    visualizer({
+      filename: 'stats.html', // 生成的分析文件
+      open: false, // 打包完成后自动打开报告
+      template: 'treemap', // 使用的图表类型，默认为'treemap'
+      gzipSize: true, // 显示gzip压缩后的大小
+      brotliSize: true, // 显示brotli压缩后的大小
+    })
   ],
 })

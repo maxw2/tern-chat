@@ -63,7 +63,7 @@ export default {
                             </div>
                             <tern-image 
                                 v-if="item.type === 'image'" 
-                                class='max-w-[200px] max-h-[200px] bg-[#e4e4e7] rounded-lg overflow-hidden' 
+                                class='w-[200px] h-[200px] bg-[#e4e4e7] rounded-lg overflow-hidden'
                                 :src='item.content'
                             ></tern-image>
                             <div v-else class='border p-[8px] rounded-[10px] text-[14px] bg-[#f4f4f5] inline-block max-w-[65%] break-words'>{{ item.content }}</div> 

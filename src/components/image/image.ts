@@ -9,7 +9,7 @@ type ImageState = 'init' | 'loading' | 'error' | 'success'
 export class TernImage extends LitElement {
   static styles = css`
     :host {
-      display: block;
+      display: inline-block
     }
     .image {
       width: 100%;

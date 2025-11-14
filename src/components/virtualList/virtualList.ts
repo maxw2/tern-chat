@@ -78,6 +78,7 @@ export class TernVirtualList extends LitElement {
     super.connectedCallback()
     this.getItemsList()
     this.initPositions()
+    this.getMaxHeight()
   }
 
   firstUpdated(_changedProperties: PropertyValues): void {
