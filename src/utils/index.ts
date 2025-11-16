@@ -33,11 +33,12 @@ export function throttle(fn: Function, delay: number = 500) {
  */
 
 export function debounce(fn: Function, delay: number = 500) {
-  let timer: number | null = null
+  let timer: number = null
   return function (this: any, ...args: any[]) {
     if (timer) clearTimeout(timer)
     timer = setTimeout(() => {
       fn.apply(this, args)
+      timer = null
     }, delay)
   }
 }
@@ -46,6 +47,6 @@ export function debounce(fn: Function, delay: number = 500) {
  * 滚动方向
  */
 export function isScrollDown(oldScroll: number, newScroll: number): boolean {
-  if(oldScroll > newScroll) return false
+  if (oldScroll > newScroll) return false
   else return true
 }

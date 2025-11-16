@@ -23,7 +23,7 @@ export class TernVirtualList extends LitElement {
     .virtual-list {
       width: 100%;
       height: 100%;
-      overflow-y: auto;
+      overflow: auto;
       position: relative;
     }
     .list-items {
@@ -37,6 +37,11 @@ export class TernVirtualList extends LitElement {
     .list-item {
       width: 100%;
       box-sizing: border-box;
+    }
+    .list-loading {
+      position: absolute;
+      top: 0px;
+      left: 0px;
     }
   `
 
@@ -61,24 +66,32 @@ export class TernVirtualList extends LitElement {
   autoHeight: boolean = false
   @property({ attribute: false })
   renderItem: (item: unknown, index: number) => string
-  @property({ type: Array })
-  private itemsList: unknown[] = []
 
+  @state()
+  private itemsList: unknown[] = []
   @state()
   private top: number = 0
   @state()
-  private maxHeight = '0px'
+  private maxHeight: number = 0
+  // @state()
+  private isLoading: boolean = false
+  @state()
+  private loadingTop: number = 0
+
   startIdx = 0
   startBuffer = 0
   posMap: Map<number, Position> = new Map()
   observer: Array<ResizeObserver> = []
   cacheScrollTop: number = 0
+  loadingNum: number = 1
 
   connectedCallback() {
     super.connectedCallback()
     this.getItemsList()
     this.initPositions()
     this.getMaxHeight()
+    this.getLoadingTop(0)
+    this.initIntersectionObserver()
   }
 
   firstUpdated(_changedProperties: PropertyValues): void {
@@ -109,6 +122,16 @@ export class TernVirtualList extends LitElement {
     return 0
   }
 
+  getTop(scrollTop: number) {
+    const curPos = this.posMap.get(this.startIdx)
+    const bufferTop =
+      this.startIdx >= this.buffer
+        ? this.posMap.get(this.buffer).top
+        : curPos.top
+
+    this.top = scrollTop - (scrollTop % curPos.top) - bufferTop
+  }
+
   getItemsList() {
     this.startBuffer =
       this.startIdx - this.buffer >= 0 ? this.startIdx - this.buffer : 0
@@ -129,8 +152,8 @@ export class TernVirtualList extends LitElement {
   getMaxHeight() {
     const len = this.list.length - 1 || 0
     const lastPos = this.posMap.get(len)
-    this.maxHeight = lastPos?.bottom + 'px' || '0px'
-    return lastPos?.bottom + 'px' || '0px'
+    this.maxHeight = lastPos?.bottom || 0
+    return lastPos?.bottom || 0
   }
 
   initPositions() {
@@ -200,47 +223,64 @@ export class TernVirtualList extends LitElement {
   }
 
   fn = debounce(this.resizeObserver, 100)
+  _scroll = debounce(this.onScroll, 200)
+  fnLoading = debounce(() => {
+    // setTimeout(() => {
+    this.isLoading = false
+    // setTimeout(() => {
+    this.requestUpdate()
+    // }, 0)
 
+    // })
+  }, 0)
   // Event
   onScroll(ev: Event) {
-    const target = ev.target as HTMLElement
+    this.isLoading = true
+    const target = (ev.target || this) as HTMLElement
     const scrollTop = target.scrollTop
     const isDown = isScrollDown(this.cacheScrollTop, scrollTop)
+
+    this.getLoadingTop(scrollTop)
+
     if (this.autoHeight) {
       window.requestAnimationFrame(() => {
-        // this.resizeObserver(isDown)
         this.fn(isDown)
         this.startIdx = this.findStartIndex(scrollTop)
         this.getItemsList()
-
-        const curPos = this.posMap.get(this.startIdx)
-        const bufferTop =
-          this.startIdx >= this.buffer
-            ? this.posMap.get(this.buffer).top
-            : curPos.top
-
-        this.top = scrollTop - (scrollTop % curPos.top) - bufferTop
+        this.getTop(scrollTop)
       })
     } else {
       this.startIdx = this.findStartIndex(scrollTop)
       this.getItemsList()
-
-      const curPos = this.posMap.get(this.startIdx)
-      const bufferTop =
-        this.startIdx >= this.buffer
-          ? this.posMap.get(this.buffer).top
-          : curPos.top
-
-      this.top = scrollTop - (scrollTop % curPos.top) - bufferTop
+      this.getTop(scrollTop)
     }
-
     this.getMaxHeight()
     this.cacheScrollTop = scrollTop
+
+    this.isLoading = false
+    this.requestUpdate()
+
+    // this.fnLoading()
+  }
+
+  initIntersectionObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      console.log('IntersectionObserver', entries)
+    })
+    observer.observe(document.querySelector('.list-loading'))
+  }
+
+  getLoadingTop(scrollTop) {
+    const bottomIdx = this.startIdx + this.itemMax + this.buffer
+    const bottomPos = this.posMap.get(bottomIdx)
+    // this.loadingTop = bottomPos.bottom + 'px' || '0px'
+    this.loadingTop = scrollTop - (scrollTop % 50)
+    console.log(this.itemEl.scrollTop)
   }
 
   render() {
     return html`<div class="virtual-list" @scroll=${this.onScroll}>
-      <div class="list-container" style="height:${this.maxHeight}"></div>
+      <div class="list-container" style="height:${this.maxHeight}px"></div>
       <div class="list-items" style="transform: translateY(${this.top}px)">
         ${when(
           this.renderItem,
@@ -258,6 +298,18 @@ export class TernVirtualList extends LitElement {
           () => html`<slot></slot>`
         )}
       </div>
+
+      <!-- <div
+        class="list-loading"
+        style="transform: translateY(${this.loadingTop}px);visibility:${this.isLoading ? 'visible' : 'hidden'}"
+      >
+        ${this.itemsList.map(
+          (item, index) =>
+            html`<div style="height: 50px;color:red;background: yellow;">
+              loading~~~~~~~~~~~
+            </div>`
+        )}
+      </div> -->
     </div>`
   }
 }

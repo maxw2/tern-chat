@@ -11,8 +11,8 @@
     "dev": "rollup --watch --config rollup.config.js",
     "build": "rollup --config rollup.config.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["web-component", "lit", "rollup", "chat", "chat-app", "virtual"],
+  "author": "maxw2",
   "license": "ISC",
   "dependencies": {
     "lit": "^3.3.1"
