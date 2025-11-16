@@ -19,7 +19,12 @@ export default defineConfig({
       file: 'dist/index.iife.js',
       format: 'iife',
       name: 'tern'
-    }
+    },
+    {
+      file: 'docs/dist/index.iife.js',
+      format: 'iife',
+      name: 'tern'
+    },
   ],
   // external: ['lit', 'lit/decorators.js'],
   plugins: [

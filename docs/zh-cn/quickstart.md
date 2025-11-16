@@ -1,28 +1,23 @@
-# 快速开始
+## tern-chat
 
-### 介绍
+> 一个跨框架的 Web 聊天组件库。
 
-- element-ui@2.15.11 / vue@2.7.14 封装 Table 组件
-- 基于 100%原生 API
-- 实现 JSON 动态驱动表单
-- 为实现自定义表格 / 嵌套表头等需求仅新增 [**slotName**](guide/eleTable?id=自定义列模板) / [**children**](guide/eleTable?id=多级表头) 两个字段
+## 概述
 
-### 初始化
+`tern-chat` 是一个基于 Web Components 构建的聊天 UI 组件库，适用于任意前端框架（如 Vue、React、Angular、Svelte 甚至原生 JS）。  
+它采用无头组件设计（Headless UI），让你能够自由控制聊天界面的结构与样式，非常适合构建 IM 聊天、AI 对话框、客服系统等交互场景。
 
-```js
+不同于传统 UI 库，它不依赖框架运行时、不强制样式约定，灵活度高，能快速集成到各种前端项目中。
 
-npm install ele-table-container
+查看 [快速开始](/zh-cn/) 了解详情。
 
-import {Table, TableContainer} from 'ele-table-container'
+## 特性
 
-Vue.components('ele-table', Table)
-// or
-export default {
-    components: {
-        'ele-table': Table
-    }
-}
+- 💡 **跨框架支持**：任何现代框架均可直接使用
+- ⚙️ **Web Components 架构**：标准化、自定义元素，真正模块化
+- 🎯 **无头组件**：组件仅提供功能和结构，不束缚样式
+- 🎨 **完全自定义样式**：支持 Tailwindcss、Slot、Shadow DOM 可选
 
-```
+## 示例
 
-<Demo />
+可以查看 [组件演示](/zh-cn/chart) 来了解更多实际使用场景和 UI 效果。

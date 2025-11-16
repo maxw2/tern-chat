@@ -275,7 +275,6 @@ export class TernVirtualList extends LitElement {
     const bottomPos = this.posMap.get(bottomIdx)
     // this.loadingTop = bottomPos.bottom + 'px' || '0px'
     this.loadingTop = scrollTop - (scrollTop % 50)
-    console.log(this.itemEl.scrollTop)
   }
 
   render() {

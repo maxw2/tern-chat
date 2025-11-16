@@ -6,5 +6,5 @@
 
 - 原生标准封装 / 无头组件 / 组合式设计
 
-[GitHub](https://github.com/maxw2/ele-table-container)
+[GitHub](https://github.com/maxw2/tern-chat)
 [查看文档](/zh-cn/quickStart)
